@@ -2,7 +2,7 @@ pico-8 cartridge // http://www.pico-8.com
 version 42
 __lua__
 -- main
--- - trocar posicao
+-- x trocar posicao
 -- - mover caixa
 -- - animacao entre quadros
 -- - identificar sucesso
@@ -18,6 +18,7 @@ function _init()
  p={
  	x=0,
  	y=0,
+ 	p=3
  }
  start=find_start(0,0)
  p.x=start[1]
@@ -30,10 +31,18 @@ function _update()
  local y=p.y
  local step=16
  if btnp(⬅️) then
-  x-=step
+  if p.p==3 then
+   x-=step
+  else
+   p.p=3
+  end
  end
  if btnp(➡️) then
-  x+=step
+  if p.p==1 then
+   x+=step
+  else
+   p.p=1
+  end
  end
  if btnp(⬆️) then
   y-=step
@@ -56,7 +65,7 @@ function _draw()
  map()
  
  color(3)
- spr(66,p.x,p.y,2,2)
+ spr(66,p.x,p.y,2,2,(p.p==1))
  --debug_map()
 end
 -->8
