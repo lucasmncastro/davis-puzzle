@@ -10,7 +10,7 @@ __lua__
 -- x mudar porta no sucesso
 -- x mudar de nivel ao passar na porta
 -- x 10 niveis simples
--- - restart level (z)
+-- x restart level (x)
 -- - abertura
 -- - animacoes
 -- -  - movimentacao
@@ -28,6 +28,7 @@ function _init()
  	p=3,
  	s=66
  }
+ tcancel=0
 
  levels={
   -- intro
@@ -87,6 +88,7 @@ function _init()
  	},
  }
  level=1 --#levels
+ tlevel=0
  init_boxes()
  
  for l in all(levels) do
@@ -162,7 +164,7 @@ function init_boxes()
   for x=0,128,2 do
    local s=mget(x,y)
    if fget(s)==8 then
-    add(boxes,{x=x,y=y,s=s})
+    add(boxes,{x=x,y=y,x0=x,y0=y,s=s})
     mset(x,y)
     mset(x+1,y)
     mset(x,y+1)
@@ -209,6 +211,25 @@ function _update()
  local step=16
  local dir
  local cur_level=levels[level]
+ 
+ tlevel+=1
+ 
+ if btn(❎) and tlevel>30 then
+  tcancel+=1
+  if tcancel>30 then
+   for b in all(cur_level.boxes) do
+    b.x=b.x0
+    b.y=b.y0
+   end
+   p.x=cur_level.start.x
+   p.y=cur_level.start.y
+   tcancel=0
+   tlevel=0
+   return
+  end  
+ else
+ 	tcancel=0
+ end
  
  if btnp(⬅️) then
   dir=⬅️
@@ -325,6 +346,17 @@ function _draw()
  end
  
  spr(p.s,p.x,p.y,2,2,(p.p==1))
+ 
+ if tcancel>0 then
+  local t="hold ❎ to restart level"
+  local x0=p.x\128*128
+  local y0=p.y\128*128
+  fillp(░)
+  rectfill(x0,y0+55-tcancel^1.5-10,x0+128,y0+70+tcancel^1.5+10,0)
+  fillp()
+  rectfill(x0,y0+55-tcancel^1.5,x0+128,y0+70+tcancel^1.5,0)
+  print(t,x0+20,y0+60,7)
+ end
  
  --debug_p()
  --debug_map() 
