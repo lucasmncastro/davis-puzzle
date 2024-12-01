@@ -14,7 +14,7 @@ __lua__
 -- x abertura
 -- x read wall tips
 -- x corrigir barril pela parede
--- - block objs after complete level
+-- x block objs after complete level
 -- - level victory effect
 -- - level transition
 -- - sfx
@@ -108,9 +108,9 @@ function _init()
   init_level_start(l)
  end
 
- current_level=levels[level]
- p.x=current_level.start.x
- p.y=current_level.start.y
+ cur_level=levels[level]
+ p.x=cur_level.start.x
+ p.y=cur_level.start.y
 end
 
 function init_level_start(l)
@@ -253,6 +253,8 @@ function update_cover()
 end
 
 function is_free(x,y)
+ if (cur_level.finished) return false
+ 
  local nspr=mget(x\8,y\8)
  local block=(fget(nspr,0) or 
               fget(nspr,4))
@@ -271,7 +273,7 @@ function update_game()
  local y=p.y
  local step=16
  local dir
- local cur_level=levels[level]
+ cur_level=levels[level]
  
  tlevel+=1
  
@@ -334,6 +336,11 @@ function update_game()
   -- todo: transicao
   p.x=cur_level.start.x
   p.y=cur_level.start.y
+  level+=1
+  cur_level=levels[level]
+  p.x=cur_level.start.x
+  p.y=cur_level.start.y
+  --sfx(0)
   return
  end
  if flag==1 and
@@ -410,12 +417,6 @@ function finish_level(l)
   mset(l.exit.x,l.exit.y+1,27)
   mset(l.exit.x+1,l.exit.y+1,28)
  end
- 
- level+=1
- cur_level=levels[level]
- p.x=cur_level.start.x
- p.y=cur_level.start.y
- --sfx(0)
 end
 
 function _draw()
